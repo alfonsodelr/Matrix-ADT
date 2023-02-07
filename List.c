@@ -92,7 +92,7 @@ int index(List L)
     return -1;
 }
 
-int front(List L)
+void* front(List L)
 {
     if(L==NULL)
     {
@@ -109,7 +109,7 @@ int front(List L)
     return L->front->data;
 }
 
-int back(List L)
+void* back(List L)
 {
     if(L==NULL)
     {
@@ -127,7 +127,7 @@ int back(List L)
     return L->back->data;
 }
 
-int get(List L)
+void* get(List L)
 {
     if(L==NULL)
     {
@@ -140,38 +140,9 @@ int get(List L)
         return L->cursor->data;
     }
 
-    return -1;  
-    
-} //QUESTION: when get is called with no cursor or empty list
-
-bool equals (List A, List B)
-{
-    if(A == NULL || B == NULL) 
-    {
-        printf("List Error: calling equals() on NULL List reference(s)\n");
-        exit(EXIT_FAILURE);
-    }
-
-    if(A->length != B->length)
-    {
-        return false;
-    }
-    
-    int index = 0;
-    int length = A->length;
-    Node tempA = A->front, tempB = B->front;
-    while(index != length)
-    {
-        if(tempA->data != tempB->data)
-        {
-            return false;
-        }
-        tempA = tempA->next; 
-        tempB = tempB->next;
-        index++;
-    }
-
-    return true;
+    int n = -1;
+    void* p = &n;
+    return p;
 } 
 
 // Manipulation procedures ----------------------------------------------------
@@ -202,7 +173,7 @@ void clear(List L)
     }
 }
 
-void set(List L, int x)
+void set(List L, void* x)
 {
     if(L==NULL)
     {
@@ -214,7 +185,7 @@ void set(List L, int x)
     {
         L->cursor->data = x;
     }
-}//QUESTION: output if length = 0 or index = -1
+}
 
 void moveFront(List L)
 {
@@ -229,7 +200,7 @@ void moveFront(List L)
         L->cursor = L->front;
         L->index = 0;
     }
-}//QUESTION: output if length == 0
+}
 
 void moveBack(List L)
 {
@@ -244,7 +215,7 @@ void moveBack(List L)
         L->cursor = L->back;
         L->index = L->length-1;
     }
-}//QUESTION: output if length == 0
+}
 
 void movePrev(List L)
 {
@@ -291,7 +262,7 @@ void moveNext(List L)
     }
 }
 
-void prepend(List L, int x)
+void prepend(List L, void* x)
 {
     if(L==NULL)
     {
@@ -322,7 +293,7 @@ void prepend(List L, int x)
     L->length++;
 }
  
-void append(List L, int x)
+void append(List L, void* x)
 {
     if(L==NULL)
     {
@@ -348,7 +319,7 @@ void append(List L, int x)
     L->length++;
 }
 
-void insertBefore(List L, int x)
+void insertBefore(List L, void* x)
 {
     if(L==NULL)
     {
@@ -373,9 +344,9 @@ void insertBefore(List L, int x)
         L->index++;
         L->length++;
     }
-} //QUESTION: output if function called but no cursor
+} 
 
-void insertAfter(List L, int x)
+void insertAfter(List L, void* x)
 {
 
     if(L==NULL)
@@ -400,7 +371,7 @@ void insertAfter(List L, int x)
         new_node->next->prev = new_node;
         L->length++;
     }
-} //QUESTION: output if function called but no cursor
+} 
 
 void deleteFront(List L) 
 {   
@@ -519,66 +490,3 @@ void delete(List L)
     return;
 }
 
-void printList(FILE* out, List L)
-{
-    if(L==NULL)
-    {
-        printf("List Error: calling printList() on NULL List reference\n");
-        exit(EXIT_FAILURE);
-    }
-
-    if(L->length > 0)
-    {
-        Node temp = L->front;
-        while(temp != NULL)
-        {
-            fprintf(out, "%d ", temp->data);
-            temp = temp->next;
-        }
-        temp = NULL;
-    }
-}
-
-List copyList(List L)
-{
-    if(L==NULL)
-    {
-        printf("List Error: calling copyList() on NULL List reference\n");
-        exit(EXIT_FAILURE);
-    }
-
-    if(L->length <= 0)
-    {
-        List empty_list = newList();
-        return empty_list;
-    }
-
-    int saved_state = L->index;
-
-    List new_list = newList();
-    new_list->index = -1;
-
-    moveFront(L);
-    for(int i = 0; i < L->length; i++)
-    {
-        append(new_list, get(L));
-        moveNext(L);
-    }
-
-    if(saved_state == -1)
-    {
-        L->index = -1;
-        L->cursor = NULL;
-    }
-    else
-    {
-        int i = 0;
-        moveFront(L);
-        while(i!=saved_state)
-        {
-            moveNext(L);
-        }
-    }
-
-    return new_list;
-}
