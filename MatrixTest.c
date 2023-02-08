@@ -8,15 +8,39 @@ int main(int argc, char* argv[])
    int n = 3;
    
    Matrix M = newMatrix(n);
+   Matrix C = NULL;
+   Matrix T = NULL;
+   Matrix P = NULL;
+   Matrix S = NULL;
 
-   changeEntry(M, 0, 0, 10.0);
-   changeEntry(M, 1, 1, 20.0);
-   changeEntry(M, 2, 2, 15.0);
-   changeEntry(M, 2, 3, 5.0);
+   changeEntry(M, 1, 1, 1.0);
+   changeEntry(M, 1, 2, 2.0);
+   changeEntry(M, 1, 3, 3.0);
+   changeEntry(M, 2, 1, 4.0);
+   changeEntry(M, 2, 2, 5.0);
+   changeEntry(M, 2, 3, 6.0);
+   changeEntry(M, 3, 1, 7.0);
+   changeEntry(M, 3, 2, 8.0);
+   changeEntry(M, 3, 3, 9.0);
 
-   printf("PRINTING...\n");
-
+   printf("PRINTING ORIGINAL MATRIX...\n");
    printMatrix(stdout, M);
+
+   printf("PRINTING COPY MATRIX...\n");
+   C = copy(M);
+   printMatrix(stdout, C);
+
+   printf("PRINTING TRANSPOSE MATRIX...\n");
+   T = transpose(M);
+   printMatrix(stdout, T);
+
+   printf("PRINTING SCALED MATRIX...\n");
+   P = scalarMult(2.0, M);
+   printMatrix(stdout, P);
+
+   S = sum(M, C);
+   printf("PRINTING SUMMED MATRIX...\n");
+   printMatrix(stdout, S);
 
    return 0;
 }
