@@ -17,8 +17,8 @@ typedef struct MatrixObj{
 }MatrixObj;
 
 typedef struct EntryObj{
-    int x;
-    int y
+    int col;
+    void* data;
 }EntryObj;
 
 Matrix newMatrix(int n)
@@ -26,7 +26,7 @@ Matrix newMatrix(int n)
     Matrix M = malloc(sizeof(MatrixObj));
     
     M->row = malloc(sizeof(n));
-    M->size = n*n;
+    M->size = n;
     M->NNZ = 0;
 
     for(int i = 0; i < n; i++)
@@ -116,67 +116,105 @@ void changeEntry(Matrix M, int i, int j, double x)
         EXIT;
     }
 
+    if(i > size(M) || j > size(M))
+    {
+        BOUND_ERROR("changeEntry");
+        EXIT;
+    }
+
+    Entry E = malloc(sizeof(EntryObj));
+    E->col = j;
+    E->data = (void*)malloc(sizeof(x));
+    E->data = &x;
+
     List L = M->row[i];
 
     if(length(L) == 0)
     {
-        append(L, &j);
-        append(L, &x);
+        append(L, E);
         return;
     }
 
     for(moveFront(L); index(L) >= 0; moveNext(L))
     {
-        if(*(int*)get(L) == j)
+        if(((Entry)get(L))->col == j)
         {
-            moveNext(L);
-            set(L, &x);
-            break;
+            insertBefore(L, E);
+            delete(L);
+            return;
         }
 
-        if(j < *(int*)get(L))
+        if(j < ((Entry)get(L))->col)
         {
-            insertBefore(L, &j);
-            insertBefore(L, &x);
-            break;
+            insertBefore(L, E);
+            return;
         }
-
-        moveNext(L);
     }
 
+    append(L, E);
 }
 
 Matrix copy(Matrix A)
 {
+    Matrix M = NULL;
 
+
+    return M;
 }
 
 Matrix transpose(Matrix A)
 {
+    Matrix M = NULL;
 
+
+    return M;
 }
 
 Matrix scalarMult(double x, Matrix A)
 {
+    Matrix M = NULL;
 
+
+    return M;
 }
 
 Matrix sum(Matrix A, Matrix B)
 {
+    Matrix M = NULL;
 
+
+    return M;
 }
 
 Matrix diff(Matrix A, Matrix B)
 {
+    Matrix M = NULL;
 
+
+    return M;
 }
 
 Matrix product(Matrix A, Matrix B)
 {
+    Matrix M = NULL;
 
+
+    return M;
 }
 
 void printMatrix(FILE* out, Matrix M)
 {
+    for(int i = 0; i < size(M); i++)
+    {
+        fprintf(stdout, "ROW %d: \n", i);
+        List L = M->row[i];
 
+        for(moveFront(L); index(L) >= 0; moveNext(L))
+        {
+            fprintf(out, "(%d, %.1lf) ", ((Entry)get(L))->col,
+            *(double*)(((Entry)get(L))->data));
+        }
+
+        fprintf(out, "\n");
+    }
 }

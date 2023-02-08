@@ -61,7 +61,7 @@ Matrix product(Matrix A, Matrix B);
 // are not printed. Each non-zero row is represented as one line consisting
 // of the row number, followed by a colon, a space, then a space separated
 // list of pairs "(col, val)" giving the column numbers and non-zero values
-// in that row. The double val will be rounded to 1 decimal point.
+// in that row. The double val will be rounded to 1 decimal point.P
 void printMatrix(FILE* out, Matrix M);
 
 
