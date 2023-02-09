@@ -131,6 +131,8 @@ true
    
 //    Matrix M = newMatrix(n);
 //    Matrix Z = newMatrix(n);
+//    Matrix B = newMatrix(n);
+//    Matrix N = newMatrix(n);
 //    Matrix C = NULL;
 //    Matrix T = NULL;
 //    Matrix P = NULL;
@@ -148,11 +150,27 @@ true
 //    changeEntry(M, 3, 2, 8.0);
 //    changeEntry(M, 3, 3, 9.0);
 
+//    changeEntry(N, 1, 1, 1.0);
+//    changeEntry(N, 1, 2, 2.0);
+//    changeEntry(N, 1, 3, 3.0);
+//    changeEntry(N, 2, 1, 4.0);
+//    changeEntry(N, 2, 2, 5.0);
+//    changeEntry(N, 2, 3, 6.0);
+//    changeEntry(N, 3, 1, 7.0);
+//    changeEntry(N, 3, 2, 8.0);
+//    changeEntry(N, 3, 3, 9.0);
+
+//    changeEntry(B, 3, 1, 7.0);
+//    changeEntry(B, 3, 2, 8.0);
+//    changeEntry(B, 3, 3, 9.0);
+
 //    changeEntry(Z, 1, 1, 9.0);
 //    changeEntry(Z, 1, 2, 9.0);
 //    changeEntry(Z, 2, 1, 9.0);
 //    changeEntry(Z, 3, 2, 9.0);
 //    changeEntry(Z, 3, 3, 9.0);
+
+//    printf("%d\n", NNZ(M));
 
 //    printf("PRINTING ORIGINAL MATRIX...\n");
 //    printMatrix(stdout, M);
@@ -176,8 +194,9 @@ true
 //    printf("PRINTING SUMMED MATRIX...\n");
 //    printMatrix(stdout, S);
 
-//    D = diff(M, Z);
+//    D = diff(M, N);
 //    printf("PRINTING SUBTRACTED MATRIX...\n");
+//    printf("%d\n", NNZ(D));
 //    printMatrix(stdout, D);
 
 //    printf("PRINTING TRANSPOSE OF M\n");
@@ -189,5 +208,4 @@ true
 //    printMatrix(stdout, P);
 
 //    return 0;
-   
 // }

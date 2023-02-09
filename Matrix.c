@@ -27,7 +27,7 @@ Matrix newMatrix(int n)
 {
     Matrix M = malloc(sizeof(MatrixObj));
     
-    M->row = malloc(sizeof(n));
+    M->row = calloc(n, sizeof(EntryObj));
     M->size = n;
     M->NNZ = 0;
 
@@ -121,6 +121,9 @@ void changeEntry(Matrix M, int i, int j, double x)
         EXIT;
     }
 
+    if(x == 0.0)
+        return;
+
     Entry E = malloc(sizeof(EntryObj));
     E->col = j;
     E->data = x;
@@ -152,6 +155,7 @@ void changeEntry(Matrix M, int i, int j, double x)
     }
 
     append(L, E);
+    M->NNZ++;
 }
 
 Matrix copy(Matrix A)
@@ -234,7 +238,7 @@ Matrix sum(Matrix A, Matrix B)
 {
     if(A == NULL)
     {
-        MATRIX_ERROR("scalarMult");
+        MATRIX_ERROR("sum");
         EXIT;
     }
 
@@ -251,9 +255,12 @@ Matrix sum(Matrix A, Matrix B)
         List L1 = A->row[i];
         List L2 = B->row[i];
 
+        if(length(L1) == 0 && length(L2) == 0)
+            continue;
+
         moveFront(L1);
         moveFront(L2);
-        for(int j = 1; j <= size(A); j++)
+        for(int j = 1; index(L1) >= 0 || index(L2) >= 0; j++)  
         {
             double x = 0.0, y = 0.0;
 
@@ -283,7 +290,7 @@ Matrix diff(Matrix A, Matrix B) //free Entry if sum == 0.0
 {
     if(A == NULL)
     {
-        MATRIX_ERROR("scalarMult");
+        MATRIX_ERROR("sum");
         EXIT;
     }
 
@@ -295,14 +302,20 @@ Matrix diff(Matrix A, Matrix B) //free Entry if sum == 0.0
 
     Matrix M = newMatrix(size(A));
 
+    if(A == B)
+        return M;
+
     for(int i = 0; i < size(A); i++)
     {
         List L1 = A->row[i];
         List L2 = B->row[i];
 
+        if(length(L1) == 0 && length(L2) == 0)
+            continue;
+
         moveFront(L1);
         moveFront(L2);
-        for(int j = 1; j <= size(A); j++)
+        for(int j = 1; index(L1) >= 0 || index(L2) >= 0; j++)  
         {
             double x = 0.0, y = 0.0;
 
@@ -331,6 +344,9 @@ Matrix diff(Matrix A, Matrix B) //free Entry if sum == 0.0
 double vectorDot(List P, List Q)
 {
     double dot_product = 0.0;
+
+    if(length(P) == 0 || length(Q) == 0)
+        return 0.0;
 
     for(moveFront(P), moveFront(Q); index(P) >= 0 && index(Q) >= 0;)
     {
@@ -386,14 +402,17 @@ void printMatrix(FILE* out, Matrix M)
 {
     for(int i = 0; i < size(M); i++)
     {
-        fprintf(stdout, "%d: ", i+1);
         List L = M->row[i];
+        if(length(L) != 0)
+            fprintf(stdout, "%d: ", i+1);
 
         for(moveFront(L); index(L) >= 0; moveNext(L))
         {
-            fprintf(out, "(%d, %.1lf) ", ((Entry)get(L))->col, (((Entry)get(L))->data));
+            if(length(L) != 0)
+                fprintf(out, "(%d, %.1lf) ", ((Entry)get(L))->col, (((Entry)get(L))->data));
         }
 
-        fprintf(out, "\n");
+        if(length(L) != 0)
+            fprintf(out, "\n");
     }
 }

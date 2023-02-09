@@ -9,68 +9,57 @@
 
 typedef struct MatrixObj* Matrix;
 
+Matrix newMatrix(int n)
 // newMatrix()
 // Returns a reference to a new nXn Matrix object in the zero state.
-Matrix newMatrix(int n);
+void freeMatrix(Matrix* pM);
 // freeMatrix()
 // Frees heap memory associated with *pM, sets *pM to NULL.
-void freeMatrix(Matrix* pM);
+int size(Matrix M);
 // Access functions
 // size()
 // Return the size of square Matrix M.
-int size(Matrix M);
+int NNZ(Matrix M);
 // NNZ()
 // Return the number of non-zero elements in M.
-int NNZ(Matrix M);
+int equals(Matrix A, Matrix B);
 // equals()
 // Return true (1) if matrices A and B are equal, false (0) otherwise.
-int equals(Matrix A, Matrix B);
+void makeZero(Matrix M);
 // Manipulation procedures
 // makeZero()
 // Re-sets M to the zero Matrix state.
-void makeZero(Matrix M);
+void changeEntry(Matrix M, int i, int j, double x);
 // changeEntry()
 // Changes the ith row, jth column of M to the value x.
 // Pre: 1<=i<=size(M), 1<=j<=size(M)
-void changeEntry(Matrix M, int i, int j, double x);
+Matrix copy(Matrix A);
 // Matrix Arithmetic operations
 // copy()
 // Returns a reference to a new Matrix object having the same entries as A.
-Matrix copy(Matrix A);
+Matrix transpose(Matrix A);
 // transpose()
 // Returns a reference to a new Matrix object representing the transpose
 // of A.
-Matrix transpose(Matrix A);
+Matrix scalarMult(double x, Matrix A);
 // scalarMult()
 // Returns a reference to a new Matrix object representing xA.
-Matrix scalarMult(double x, Matrix A);
+Matrix sum(Matrix A, Matrix B);
 // sum()
 // Returns a reference to a new Matrix object representing A+B.
 // pre: size(A)==size(B)
-Matrix sum(Matrix A, Matrix B);
+Matrix diff(Matrix A, Matrix B);
 // diff()
 // Returns a reference to a new Matrix object representing A-B.
 // pre: size(A)==size(B)
-Matrix diff(Matrix A, Matrix B);
+Matrix product(Matrix A, Matrix B);
 // product()
 // Returns a reference to a new Matrix object representing AB
 // pre: size(A)==size(B)
-Matrix product(Matrix A, Matrix B);
+void printMatrix(FILE* out, Matrix M);
 // printMatrix()
 // Prints a string representation of Matrix M to filestream out. Zero rows
 // are not printed. Each non-zero row is represented as one line consisting
 // of the row number, followed by a colon, a space, then a space separated
 // list of pairs "(col, val)" giving the column numbers and non-zero values
-// in that row. The double val will be rounded to 1 decimal point.P
-void printMatrix(FILE* out, Matrix M);
-
-
-
-
-
-
-
-
-
-
-#endif
+// in that row. The double val will be rounded to 1 decimal point.
