@@ -6,6 +6,8 @@
 
 #define MATRIX_ERROR(x) printf("Matrix Error: calling %s() on NULL Matrix reference\n", x)
 #define BOUND_ERROR(x) printf("Matrix Error: calling %s() with out of bounds reference\n", x)
+#define SIZE_ERROR(x) printf("Matrix Error: calling %s() on non-equal-sized Matrices\n", x);
+
 #define EXIT exit(EXIT_FAILURE)
 
 typedef struct EntryObj* Entry;
@@ -236,77 +238,146 @@ Matrix sum(Matrix A, Matrix B)
         EXIT;
     }
 
+    if(size(A) != size(B))
+    {
+        SIZE_ERROR("sum");
+        EXIT;
+    }
+
     Matrix M = newMatrix(size(A));
 
-    for(int i = 0; i <= size(A); i++)
+    for(int i = 0; i < size(A); i++)
     {
         List L1 = A->row[i];
         List L2 = B->row[i];
 
+        moveFront(L1);
+        moveFront(L2);
         for(int j = 1; j <= size(A); j++)
         {
             double x = 0.0, y = 0.0;
-            moveFront(L1);
-            moveFront(L2);
 
-            if(length(L1) == 0)
+            if(((Entry)get(L1))->col == j)
             {
-                x = 0.0;
-            }
-            else
-            {
-                if(((Entry)get(L1))->col == j)
-                {
-                    x = ((Entry)get(L1))->data;
-                    moveNext(L1);
-                }
-                else
-                {
-                    x = 0.0;
-                    moveNext(L1);
-                }
+                x = ((Entry)get(L1))->data;
+                moveNext(L1);
             }
 
-            if(length(L2) == 0)
+            if(((Entry)get(L2))->col == j)
             {
-                y = 0.0;
-            }
-            else
-            {
-                if(((Entry)get(L2))->col == j)
-                {
-                    y = ((Entry)get(L2))->data;
-                    moveNext(L2);
-                }
-                else
-                {
-                    y = 0.0;
-                    moveNext(L2);
-                }
+                y = ((Entry)get(L2))->data;
+                moveNext(L2);
             }
 
             double sum = x + y; 
-            printf("SUM: %.1lf\n", sum);
 
-            changeEntry(M, i+1, j, sum);
+            if(sum != 0.0)
+                changeEntry(M, i+1, j, sum);
         }
     }
 
     return M;
 }
 
-Matrix diff(Matrix A, Matrix B)
+Matrix diff(Matrix A, Matrix B) //free Entry if sum == 0.0
 {
-    Matrix M = NULL;
+    if(A == NULL)
+    {
+        MATRIX_ERROR("scalarMult");
+        EXIT;
+    }
 
+    if(size(A) != size(B))
+    {
+        SIZE_ERROR("sum");
+        EXIT;
+    }
+
+    Matrix M = newMatrix(size(A));
+
+    for(int i = 0; i < size(A); i++)
+    {
+        List L1 = A->row[i];
+        List L2 = B->row[i];
+
+        moveFront(L1);
+        moveFront(L2);
+        for(int j = 1; j <= size(A); j++)
+        {
+            double x = 0.0, y = 0.0;
+
+            if(((Entry)get(L1))->col == j)
+            {
+                x = ((Entry)get(L1))->data;
+                moveNext(L1);
+            }
+
+            if(((Entry)get(L2))->col == j)
+            {
+                y = ((Entry)get(L2))->data;
+                moveNext(L2);
+            }
+
+            double sum = x - y; 
+
+            if(sum != 0.0)
+                changeEntry(M, i+1, j, sum);
+        }
+    }
 
     return M;
 }
 
+double vectorDot(List P, List Q)
+{
+    double dot_product = 0.0;
+
+    for(moveFront(P), moveFront(Q); index(P) >= 0 && index(Q) >= 0;)
+    {
+        double product = 0.0;
+        if(((Entry)get(P))->col == ((Entry)get(Q))->col)
+        {
+            product = ((Entry)get(P))->data * ((Entry)get(Q))->data;
+            moveNext(P);
+            moveNext(Q);
+        }
+        else
+        {
+           (((Entry)get(P))->col < ((Entry)get(Q))->col) ? moveNext(P) : moveNext(Q);
+        }
+        dot_product += product;
+    }
+
+    return dot_product;
+}
+
 Matrix product(Matrix A, Matrix B)
 {
-    Matrix M = NULL;
+    if(A == NULL || B == NULL)
+    {
+        MATRIX_ERROR("product");
+        EXIT;
+    }
 
+    if(size(A) != size(B))
+    {
+        SIZE_ERROR("product");
+        EXIT;
+    }
+
+    Matrix M = newMatrix(size(A));
+    Matrix T = transpose(B);
+
+    for(int i = 0; i < size(A); i++)
+    {
+        List L1 = A->row[i];
+        for(int j = 0; j < size(A); j++)
+        {
+            List L2 = T->row[j];
+            double dot_product = vectorDot(L1, L2);
+            changeEntry(M, i+1, j+1, dot_product);
+        }
+    }
 
     return M;
 }
