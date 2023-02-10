@@ -26,8 +26,7 @@ typedef struct EntryObj{
 Matrix newMatrix(int n)
 {
     Matrix M = malloc(sizeof(MatrixObj));
-    
-    M->row = calloc(n, sizeof(EntryObj));
+    M->row = calloc(n, sizeof(List));
     M->size = n;
     M->NNZ = 0;
 
@@ -41,7 +40,24 @@ Matrix newMatrix(int n)
 
 void freeMatrix(Matrix* pM)
 {
+    if((*pM) == NULL)
+    {
+        MATRIX_ERROR("freeMatrix");
+        EXIT;
+    }
+
+    if(pM != NULL && *pM != NULL)
+    {
+        for(int i = 0; i < size(*pM); i++)
+        {
+            List L = (*pM)->row[i];
+            freeList(&L);
+        }
+        free((*pM)->row);
+    }
     
+    free(*pM);
+    (*pM) = NULL;
 }
 
 int size(Matrix M)
@@ -85,13 +101,13 @@ int equals(Matrix A, Matrix B)
         List L1 = A->row[i];
         List L2 = B->row[i];
 
-        for(moveFront(L1), moveFront(L2); index(L1) >= 0; moveNext(L1), moveNext(L2))
+        for(moveFront(L1), moveFront(L2); index(L1) >= 0 || index(L2) >= 0; moveNext(L1), moveNext(L2))
         {
             if(((Entry)get(L1))->col != ((Entry)get(L2))->col)
                 return 0;
             if(((Entry)get(L1))->data != ((Entry)get(L2))->data)
                 return 0;
-        }   
+        }
     }
     return 1;
 }
@@ -263,6 +279,9 @@ Matrix sum(Matrix A, Matrix B)
         EXIT;
     }
 
+    if(A == B)
+        return scalarMult(2, A);
+
     Matrix M = newMatrix(size(A));
 
     for(int i = 0; i < size(A); i++)
@@ -316,6 +335,10 @@ Matrix diff(Matrix A, Matrix B) //free Entry if sum == 0.0
     }
 
     Matrix M = newMatrix(size(A));
+
+    if(A == B)  
+        return M;
+
 
     if(A == B)
         return M;
@@ -413,6 +436,7 @@ Matrix product(Matrix A, Matrix B)
         }
     }
 
+    freeMatrix(&T);
     return M;
 }
 
@@ -429,7 +453,7 @@ void printMatrix(FILE* out, Matrix M)
     {
         List L = M->row[i];
         if(length(L) != 0)
-            fprintf(stdout, "%d: ", i+1);
+            fprintf(out, "%d: ", i+1);
 
         for(moveFront(L); index(L) >= 0; moveNext(L))
         {
