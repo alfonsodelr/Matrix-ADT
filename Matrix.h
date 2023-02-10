@@ -9,7 +9,7 @@
 
 typedef struct MatrixObj* Matrix;
 
-Matrix newMatrix(int n)
+Matrix newMatrix(int n);
 // newMatrix()
 // Returns a reference to a new nXn Matrix object in the zero state.
 void freeMatrix(Matrix* pM);
@@ -63,3 +63,5 @@ void printMatrix(FILE* out, Matrix M);
 // of the row number, followed by a colon, a space, then a space separated
 // list of pairs "(col, val)" giving the column numbers and non-zero values
 // in that row. The double val will be rounded to 1 decimal point.
+
+#endif

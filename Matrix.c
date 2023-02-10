@@ -74,6 +74,9 @@ int equals(Matrix A, Matrix B)
         EXIT;
     }
 
+    if(A == B)
+        return 1;
+
     if(size(A) != size(B))
         return 0;
 
@@ -122,7 +125,19 @@ void changeEntry(Matrix M, int i, int j, double x)
     }
 
     if(x == 0.0)
+    {
+        List L = M->row[i-1];
+
+        for(moveFront(L); index(L) >= 0; moveNext(L))
+        {
+            if(((Entry)get(L))->col == j)
+            {
+                delete(L);
+                M->NNZ--;
+            }
+        }
         return;
+    }
 
     Entry E = malloc(sizeof(EntryObj));
     E->col = j;
@@ -363,7 +378,6 @@ double vectorDot(List P, List Q)
         }
         dot_product += product;
     }
-
     return dot_product;
 }
 
@@ -387,9 +401,13 @@ Matrix product(Matrix A, Matrix B)
     for(int i = 0; i < size(A); i++)
     {
         List L1 = A->row[i];
+        if(length(L1) == 0)
+            continue;
         for(int j = 0; j < size(A); j++)
         {
             List L2 = T->row[j];
+            if(length(L2) == 0)
+                continue;
             double dot_product = vectorDot(L1, L2);
             changeEntry(M, i+1, j+1, dot_product);
         }
@@ -400,6 +418,13 @@ Matrix product(Matrix A, Matrix B)
 
 void printMatrix(FILE* out, Matrix M)
 {
+
+    if(M == NULL || out == NULL)
+    {
+        MATRIX_ERROR("printMatrix");
+        EXIT;
+    }
+
     for(int i = 0; i < size(M); i++)
     {
         List L = M->row[i];
